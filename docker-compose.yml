@@ -1,0 +1,52 @@
+version: '3'
+
+services:
+  postgres:
+    image: postgres:13.6-alpine
+    hostname: postgres
+    networks:
+      - ntw
+    environment:
+      - POSTGRES_DB=${POSTGRES_DB:-calc}
+      - POSTGRES_USER=${POSTGRES_USER:-user}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-password}
+#    volumes:
+#      - pg_project:/var/lib/postgresql/data
+#      - ./db_scripts:/docker-entrypoint-initdb.d
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: pg_isready -U ${POSTGRES_USER:-user} -d ${POSTGRES_DB:-calc}
+      interval: 20s
+      timeout: 5s
+      retries: 5
+
+  app:
+    build: .
+    hostname: app
+    ports:
+      - "8000:8000"
+    networks:
+      - ntw
+    restart: unless-stopped
+    environment:
+      - POSTGRES_DB=${POSTGRES_DB:-calc}
+      - POSTGRES_USER=${POSTGRES_USER:-user}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-password}
+    volumes:
+      - ./src:/calc/src
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+
+#volumes:
+#  pg_project:
+
+
+networks:
+  ntw:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.16.57.0/24
