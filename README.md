@@ -43,3 +43,7 @@ Start the game - ```python socket_server.py```.
 
 When server is up, you can run 2 clients:
 ```python player.py``` (1 command for 1 client)
+
+
+# TODO
+1. Make tic-tac-toe game a part of API service
