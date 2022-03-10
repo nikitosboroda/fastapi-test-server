@@ -1,0 +1,41 @@
+app.yaml - to deploy app in AppEngine
+
+
+# Create project
+export project_id=<value>
+export project_name=<value>
+
+## Get list of locations
+gcloud app regions list
+gcloud artifacts locations list
+
+export location=<value>  # europe-west
+
+
+
+gcloud projects create $project_id
+gcloud config set project $project_id
+
+
+# Deploy in K8s
+https://cloud.google.com/kubernetes-engine/docs/quickstarts/deploying-a-language-specific-app#standard
+
+
+export registry_repo=<value>   # first-app-1
+
+gcloud artifacts repositories create $registry_repo \
+    --project=$(gcloud config get-value project) \
+    --repository-format=docker \
+    --location=$location \
+    --description="Docker repository"
+
+gcloud builds submit --tag $location-docker.pkg.dev/$(gcloud config get-value project)/$registry_repo/fastapi-app .
+
+## Create a GKE cluster
+export gke_service_name=<value>  # fastapi-service
+gcloud container clusters create $gke_service_name --num-nodes 1 --zone $location-a
+
+kubectl apply -f deployment.yaml
+kubectl apply -f service.yaml
+
+## To get external IP: ``` kubectl get services ```

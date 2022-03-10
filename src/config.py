@@ -1,7 +1,7 @@
 import os
 
 DATABASE = {
-    'hostname': 'postgres',
+    'hostname': os.getenv("DB_HOSTNAME", 'localhost'),
     'port': 5432,
     'database': os.getenv("POSTGRES_DB", "calc"),
     'min_pool': 10,

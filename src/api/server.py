@@ -1,3 +1,5 @@
+import time
+
 from fastapi import FastAPI
 import uvicorn
 
@@ -5,7 +7,13 @@ from src.api.endpoints import get_history, calculate
 from src.api.models import CalcResponse, HistoryResponse
 from src.db.base import init_db
 
-init_db()
+while True:
+    try:
+        init_db()
+    except Exception:
+        time.sleep(10)
+    else:
+        break
 
 
 app = FastAPI()

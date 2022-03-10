@@ -47,3 +47,4 @@ When server is up, you can run 2 clients:
 
 # TODO
 1. Make tic-tac-toe game a part of API service
+2. Deploy in cloud
